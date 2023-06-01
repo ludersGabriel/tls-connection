@@ -1,0 +1,4 @@
+openssl genrsa -out server.key 2048
+2034  openssl genrsa -aes256 -out server.key 2048
+2035  openssl req -new -key server.key -out signreq.csr
+2036  openssl x509 -req -days 365 -in signreq.csr -signkey server.key -out certificate.crt
