@@ -1,17 +1,24 @@
-import ssl, socket
+import ssl, socket, os
+from dotenv import load_dotenv
 
 class Server:
-  host = '127.0.0.1'
-  port = 8080
-  commonName = 'astora'
-  serverCert = './server/server.crt'
-  serverKey = './server/server.key'
-  clientCert = './client/client.crt'
+  host = None
+  port = None
+  commonName = None
+  serverCert = None
+  serverKey = None
+  clientCert = None
   
   context = None
   sock = None  
   
   def __init__(self):
+    self.readEnv()
+    self.createContext()
+
+    print('Server created')
+  
+  def createContext(self):
     self.context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     self.context.verify_mode = ssl.CERT_REQUIRED
     self.context.load_cert_chain(certfile=self.serverCert, keyfile=self.serverKey)
@@ -21,8 +28,16 @@ class Server:
     
     assert isinstance(self.sock, socket.socket)
     assert isinstance(self.context, ssl.SSLContext)
-
-    print('Server created')
+  
+  def readEnv(self):
+    load_dotenv()
+    
+    self.host = os.getenv('HOST')
+    self.port = int(os.getenv('PORT'))
+    self.commonName = os.getenv('COMMON_NAME')
+    self.serverCert = os.getenv('SERVER_CERT')
+    self.serverKey = os.getenv('SERVER_KEY')
+    self.clientCert = os.getenv('CLIENT_CERT')
   
   def sslBind(self):
     self.sock.bind((self.host, self.port))  

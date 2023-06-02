@@ -1,21 +1,28 @@
-from serverClass import Server
-import ssl, socket
+import ssl, socket, os
+from dotenv import load_dotenv
 
 class Client:
-  clientCert = './client/client.crt'
-  clientKey = './client/client.key'
+  clientCert = None
+  clientKey = None
+  serverCert = None
+  serverCommonName = None
+  serverHost = None
+  serverPort = None
   
   context = None
-  server = None
   client = None
   
-  def __init__(self, server):
-    assert isinstance(server, Server) 
-    self.server = server
+  def __init__(self):
+    self.readEnv()
+    self.createContext()
     
+    
+    print('Client created')
+    
+  def createContext(self):
     self.context = ssl.create_default_context(
       ssl.Purpose.SERVER_AUTH,
-      cafile=self.server.serverCert
+      cafile=self.serverCert
     )
     self.context.load_cert_chain(
       certfile=self.clientCert, keyfile=self.clientKey
@@ -27,18 +34,26 @@ class Client:
     
     assert isinstance(self.client, socket.socket)
     assert isinstance(self.context, ssl.SSLContext)
+  
+  def readEnv(self):
+    load_dotenv()
     
-    print('Client created')
+    self.clientCert = os.getenv('CLIENT_CERT')
+    self.clientKey = os.getenv('CLIENT_KEY')
+    self.serverCert = os.getenv('SERVER_CERT')
+    self.serverCommonName = os.getenv('COMMON_NAME')
+    self.serverPort = int(os.getenv('PORT'))
+    self.serverHost = os.getenv('HOST')
     
   def sslConnect(self):
     self.client = self.context.wrap_socket(
       self.client,
       server_side=False,
-      server_hostname=self.server.commonName
+      server_hostname=self.serverCommonName
     )
     
     self.client.connect(
-      (self.server.host, self.server.port)
+      (self.serverHost, self.serverPort)
     )
     
   def send(self, message):
