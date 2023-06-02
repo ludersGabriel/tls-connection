@@ -2,22 +2,21 @@ import socket, ssl
 
 HOST = '127.0.0.1'
 PORT = 8080
+SERVER_COMMON_NAME = 'astora'
+SERVER_CERT = './server/server.crt'
+SERVER_KEY = './server/server.key'
+CLIENT_CERT = './client/client.crt'
 
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.verify_mode = ssl.CERT_REQUIRED
+context.load_cert_chain(certfile=SERVER_CERT, keyfile=SERVER_KEY)
+context.load_verify_locations(cafile=CLIENT_CERT)
 
-context.load_verify_locations('certificate.crt')
-context.load_cert_chain(certfile='certificate.crt', keyfile='server.key')
-context.check_hostname = False
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 if __name__ == '__main__':
-  print(context)
-  
-  server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-  
-  server.bind((HOST, PORT))
-  
-  server.listen(10)
+  server.bind((HOST, PORT))  
+  server.listen(5)
   
   server = context.wrap_socket(
     server, server_side=True

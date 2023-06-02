@@ -4,16 +4,14 @@ import ssl
 from server import HOST as SERVER_HOST
 from server import PORT as SERVER_PORT
 from server import SERVER_COMMON_NAME
-from server import SERVER_CERT
 
-CLIENT_CERT = './client/client.crt'
-CLIENT_KEY = './client/client.key'
+ATTACKER_CERT = './attacker/attacke.crt'
+ATTACKER_KEY = './attacker/attacker.key'
 
 context = ssl.create_default_context(
   ssl.Purpose.SERVER_AUTH,
-  cafile=SERVER_CERT
 )
-context.load_cert_chain(certfile=CLIENT_CERT, keyfile=CLIENT_KEY)
+context.load_cert_chain(certfile=ATTACKER_CERT, keyfile=ATTACKER_KEY)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
