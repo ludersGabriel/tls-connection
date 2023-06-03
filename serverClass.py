@@ -1,6 +1,7 @@
 import ssl, socket, os
 from dotenv import load_dotenv
 
+from db import Db
 class Server:
   host = None
   port = None
@@ -9,6 +10,7 @@ class Server:
   serverKey = None
   clientCert = None
   
+  db = None  
   context = None
   sock = None  
   
@@ -16,6 +18,8 @@ class Server:
     self.readEnv()
     self.createContext()
 
+    db = Db()
+    
     print('Server created')
   
   def createContext(self):
@@ -49,7 +53,15 @@ class Server:
     
   def listen(self):
     while True:
-      connection, client_addr = self.sock.accept()
+      connection = None 
+      client_addr = None 
+      
+      while connection is None:
+        try:
+          connection, client_addr = self.sock.accept()
+        except Exception as e:
+          # write a logger that will log these errors to a file
+          print(e)
       
       with connection:
         print('Connected by', client_addr)

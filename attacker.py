@@ -1,12 +1,11 @@
 import socket
 import ssl
 
-from server import HOST as SERVER_HOST
-from server import PORT as SERVER_PORT
+SERVER_HOST = '127.0.0.1'
+SERVER_PORT = 8080
 
 context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
 
-context.load_verify_locations('certificate.crt')
 context.check_hostname = False
 context.verify_mode = ssl.CERT_NONE
 

@@ -1,9 +1,9 @@
 import socket
 import ssl
 
-from server import HOST as SERVER_HOST
-from server import PORT as SERVER_PORT
-from server import SERVER_COMMON_NAME
+SERVER_HOST = '127.0.0.1'
+SERVER_PORT = 8080
+SERVER_COMMON_NAME = 'astora'
 
 ATTACKER_CERT = './attacker/attacke.crt'
 ATTACKER_KEY = './attacker/attacker.key'

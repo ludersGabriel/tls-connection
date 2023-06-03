@@ -1,37 +1,27 @@
-import redis
-from redis.commands.json.path import Path
-import redis.commands.search.aggregation as aggregations
-import redis.commands.search.reducers as reducers
-import redis.commands.search.field as fields
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-from redis.commands.search.query import NumericFilter, Query
-
-schema = (
-    fields.NumericField("$.id", as_name="id"),
-    fields.TextField("$.name", as_name="name"), 
-    fields.VectorField("$.type", as_name="type")
-)
+from prisma import Prisma
+from trainer import Trainer
 
 class Db:
-  db = None
-  indexedDb = None
+  prisma = None
+  trainer = None
   
   def __init__(self):
-    self.db = redis.Redis(
-      host='localhost',
-      port=6379,
-      decode_responses=True
-    )
+    self.prisma = Prisma()
+    self.prisma.connect()
     
-    self.indexedDb = self.db.ft("idx:pokemon")
-    
-    self.indexedDb.create_index(
-      schema,
-      definition=IndexDefinition(prefix=['pokemon:'], index_type=IndexType.JSON)
-    )
-    
+    self.trainer = Trainer(self.prisma)
     print('Db created')
-    
+   
+  def disconnect(self):
+    self.prisma.disconnect()
+    print('Db disconnected')
 
 if __name__ == '__main__':
   db = Db()
+  
+  trainers = db.trainer.findAll()
+  
+  for trainer in trainers:
+    print(f'{trainer.name} from {trainer.hometown}')
+  
+  db.disconnect()
