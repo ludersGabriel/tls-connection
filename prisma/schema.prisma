@@ -12,6 +12,7 @@ generator client {
     recursive_type_depth = 5
 }
 
+// all pokemon Types
 enum Types {
     Grass
     Poison
@@ -54,6 +55,7 @@ model Pokemon {
     updatedAt DateTime @updatedAt
 }
 
+// Relates pokemon to trainers
 model PokemonOnUsers {
     id       Int    @id @default(autoincrement())
     nickname String

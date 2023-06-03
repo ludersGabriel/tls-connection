@@ -6,6 +6,7 @@ from prisma.models import Trainer
 from logger import Logger, LoggerTypes
 
 class Client:
+  # Client variables
   clientCert = None
   clientKey = None
   serverCert = None
@@ -14,36 +15,43 @@ class Client:
   serverPort = None
   logsPath = None
   
-  MAX_TCP_SIZE = 2 ** 16 - 1
+  # Maximum size of TCP packets
+  MAX_TCP_SIZE = 2 ** 16 - 1024
       
   context = None
   client = None
   logger = None
   
   def __init__(self):
-    self.readEnv()
-    self.createContext()
+    self.readEnv() # Load environment variables
+    self.createContext() # Creates a Client context
     
     self.logger = Logger(self.logsPath)
     
-    print('Client created')
-    
+    print('[   OK   ] Client created successfully!')
+
+  # Creates a Client context  
   def createContext(self):
+    # Creates a SSL client context
     self.context = ssl.create_default_context(
       ssl.Purpose.SERVER_AUTH,
       cafile=self.serverCert
     )
+    # Loads the client certificate
     self.context.load_cert_chain(
       certfile=self.clientCert, keyfile=self.clientKey
     )
     
+    # Creates a TCP socket with ipv4
     self.client = socket.socket(
       socket.AF_INET, socket.SOCK_STREAM
     )
     
+    # Verify that the instances were created properly
     assert isinstance(self.client, socket.socket)
     assert isinstance(self.context, ssl.SSLContext)
   
+  # Load environment variables of .env
   def readEnv(self):
     load_dotenv()
     
@@ -54,7 +62,8 @@ class Client:
     self.serverPort = int(os.getenv('PORT'))
     self.serverHost = os.getenv('HOST')
     self.logsPath = os.getenv('CLIENT_LOG')
-    
+
+  # Wraps the client socket with the SSL  
   def sslConnect(self):
     self.client = self.context.wrap_socket(
       self.client,
@@ -62,6 +71,7 @@ class Client:
       server_hostname=self.serverCommonName
     )
     
+    # Connects to the server
     self.client.connect(
       (self.serverHost, self.serverPort)
     )
@@ -69,8 +79,10 @@ class Client:
   def send(self, message):
     assert isinstance(message, Message)
     
+    # Serialize the message object into a byte stream
     packet = pickle.dumps(message)
     
+    # Checks if packet have the correct size
     if len(packet) > self.MAX_TCP_SIZE:
       self.logger.logMessage(
         f'Packet too large: {len(packet)} bytes', LoggerTypes.ERROR
