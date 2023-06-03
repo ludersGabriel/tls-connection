@@ -86,7 +86,36 @@ class Client:
   def close(self):
     self.client.close()
   
+  def handleGetAllTrainers(self, resp, log):
+    log += '\n\nTrainers\n'
+    log += '--------\n\n'
+    
+    for trainer in resp.data:
+      assert isinstance(trainer, Trainer)
+      
+      log += f'{trainer.name}: id {trainer.id}, age {trainer.age} and hometown {trainer.hometown}\n'
+      
+    self.logger.logMessage(log + '\n', LoggerTypes.INFO)
   
+  def handleGetTrainer(self, resp, log):
+    if resp.data == None:
+      log += 'Trainer not found\n'
+      self.logger.logMessage(log, LoggerTypes.WARNING)
+      return
+    
+    assert isinstance(resp.data, Trainer)
+    
+    log += f'{resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
+    
+    self.logger.logMessage(log, LoggerTypes.INFO)
+  
+  def handleCreateTrainer(self, resp, log):
+    assert isinstance(resp.data, Trainer)
+    
+    log += f'created = {resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
+
+    self.logger.logMessage(log, LoggerTypes.INFO)
+    
   def handleResp(self, sent): 
     assert isinstance(sent, Message)
     
@@ -95,15 +124,16 @@ class Client:
     
     log = ''
     
-    if sent.data.split(' ')[0] == 'getAllTrainers':
-      log += '\n\nTrainers\n'
-      log += '--------\n\n'
-      
-      for trainer in resp.data:
-        assert isinstance(trainer, Trainer)
-        
-        log += f'{trainer.name}: id {trainer.id}, age {trainer.age} and hometown {trainer.hometown}\n'
-        
-      self.logger.logMessage(log + '\n', LoggerTypes.INFO)
+    sentSplit = sent.data.split(' ')
+
+    op = f'operation and params: {sentSplit}'
+    self.logger.logMessage(op, LoggerTypes.INFO)
+    
+    if sentSplit[0] == 'getAllTrainers':
+      self.handleGetAllTrainers(resp, log)
+    elif sentSplit[0] == 'getTrainer':
+      self.handleGetTrainer(resp, log)
+    elif sentSplit[0] == 'createTrainer':
+      self.handleCreateTrainer(resp, log)
 
   

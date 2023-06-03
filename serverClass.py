@@ -70,8 +70,11 @@ class Server:
         try:
           connection, client_addr = self.sock.accept()
         except Exception as e:
-          # write a logger that will log these errors to a file
-          print(e)
+          self.logger.logMessage(
+            'Error accepting connection: ' + str(e),
+            LoggerTypes.ERROR
+          )
+          continue
       
       with connection:
         self.logger.logMessage(
@@ -95,29 +98,66 @@ class Server:
           
           resp, type = self.handleMessage(data)              
 
-          Logger.logMessage(self.logger, resp, type)
+          self.sendResp(resp, connection, type)
+
+  def sendResp(self, message, connection, type):
+    assert isinstance(message, Message)
+    assert isinstance(connection, ssl.SSLSocket)
+    
+    Logger.logMessage(self.logger, message, type)
           
-          packet = pickle.dumps(resp)
-          
-          if len(packet) > self.MAX_TCP_SIZE:
-            self.logger.logMessage(
-              f'Packet too large: {len(packet)} bytes', LoggerTypes.ERROR
-            )
-            raise Exception('Packet too large')
-          
-          connection.sendall(packet)
+    packet = pickle.dumps(message)
+    
+    if len(packet) > self.MAX_TCP_SIZE:
+      self.logger.logMessage(
+        f'Packet too large: {len(packet)} bytes', LoggerTypes.ERROR
+      )
+      raise Exception('Packet too large')
+    
+    connection.sendall(packet)
 
   def handleTrainer(self, message):
     assert isinstance(message, Message)
     assert isinstance(message.data, str)
     
     operation = message.data.split(' ')[0]
+    split = message.data.split(' ')
     
     data = None
     loggerType = LoggerTypes.INFO
     
     if operation == 'getAllTrainers':
       data = self.db.trainer.findAll()
+    elif operation == 'getTrainer':
+      data = self.db.trainer.findOne(int(split[1]))
+    elif operation == 'createTrainer':
+      data = self.db.trainer.create(
+        {
+          'name': split[1],
+          'age': int(split[2]),
+          'hometown': split[3]
+        }
+      )
+    elif operation == 'updateTrainer':
+      dbData = self.db.trainer.findOne(int(split[1]))
+      
+      if dbData is None:
+        data = 'Trainer not found'
+        loggerType = LoggerTypes.ERROR
+      else:
+        name = split[2] if split[2] != 'null' else dbData['name']
+        age = int(split[3]) if split[3] != 'null' else dbData['age']
+        hometown = split[4] if split[4] != 'null' else dbData['hometown']
+        
+        data = self.db.trainer.update(
+          int(split[1]),
+          {
+            'name': name,
+            'age': age,
+            'hometown': hometown
+          }
+        )
+      
     else:
       data = 'Invalid operation or no data found'
       loggerType = LoggerTypes.ERROR

@@ -12,7 +12,11 @@ class Trainer:
     return self.prisma.trainer.find_many()
   
   def findOne(self, id):
-    return self.prisma.trainer.findOne(id)
+    return self.prisma.trainer.find_unique(
+      where={
+        'id': id
+      }
+    )
   
   def create(self, data):
     return self.prisma.trainer.create(

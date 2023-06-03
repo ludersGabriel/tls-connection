@@ -1,4 +1,5 @@
 [92m[INFO] [0mtrainer: getAllTrainers
+[92m[INFO] [0moperation and params: ['getAllTrainers']
 [92m[INFO] [0m
 
 Trainers
@@ -8,5 +9,14 @@ Ash Ketchum: id 9, age 10 and hometown Pallet Town
 Misty: id 10, age 12 and hometown Cerulean City
 Brock: id 11, age 15 and hometown Pewter City
 Gary Oak: id 12, age 10 and hometown Pallet Town
+iago: id 13, age 10 and hometown curitiba
 
+
+[92m[INFO] [0mtrainer: getTrainer 9
+[92m[INFO] [0moperation and params: ['getTrainer', '9']
+[92m[INFO] [0mAsh Ketchum: id 9, age 10 and hometown Pallet Town
+
+[92m[INFO] [0mtrainer: createTrainer mylena 15 curitiba
+[92m[INFO] [0moperation and params: ['createTrainer', 'mylena', '15', 'curitiba']
+[92m[INFO] [0mcreated = mylena: id 14, age 15 and hometown curitiba
 
