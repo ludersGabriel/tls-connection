@@ -1,0 +1,68 @@
+// database
+datasource db {
+    provider = "postgresql"
+    url      = "postgresql://postgres:postgres@localhost:5432/postgres"
+}
+
+// generator
+generator client {
+    provider             = "prisma-client-py"
+    interface            = "sync"
+    recursive_type_depth = 5
+}
+
+enum Types {
+    Grass
+    Poison
+    Fire
+    Flying
+    Water
+    Bug
+    Normal
+    Electric
+    Ground
+    Fairy
+    Fighting
+    Psychic
+    Rock
+    Steel
+    Ice
+    Ghost
+    Dragon
+}
+
+model Trainer {
+    id       Int    @id @default(autoincrement())
+    name     String
+    age      Int
+    hometown String
+
+    PokemonOnUsers PokemonOnUsers[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Pokemon {
+    id             Int              @id @default(autoincrement())
+    name           String
+    type           Types[]
+    PokemonOnUsers PokemonOnUsers[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model PokemonOnUsers {
+    id       Int    @id @default(autoincrement())
+    nickname String
+
+    trainerId Int
+    pokemonId Int
+
+    trainer Trainer @relation(fields: [trainerId], references: [id])
+    pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
