@@ -14,7 +14,7 @@ class Server:
   clientCert = None
   logsPath = None
   
-  MAX_TCP_SIZE = 2 ** 16 - 1
+  MAX_TCP_SIZE = 2 ** 16 - 1024
   
   db = None  
   context = None

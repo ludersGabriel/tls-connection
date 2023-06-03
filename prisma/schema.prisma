@@ -1,7 +1,8 @@
 // database
 datasource db {
     provider = "postgresql"
-    url      = "postgresql://postgres:postgres@localhost:5432/postgres"
+    // url      = "postgresql://postgres:postgres@localhost:5432/postgres"
+    url      = "postgresql://postgres@localhost:5432/pokemon"
 }
 
 // generator
