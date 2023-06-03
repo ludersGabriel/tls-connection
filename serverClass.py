@@ -1,7 +1,10 @@
-import ssl, socket, os
+import ssl, socket, os, pickle 
 from dotenv import load_dotenv
 
 from db import Db
+from message import Message, MessageTypes
+from logger import Logger, LoggerTypes
+
 class Server:
   host = None
   port = None
@@ -9,16 +12,20 @@ class Server:
   serverCert = None
   serverKey = None
   clientCert = None
+  logsPath = None
   
   db = None  
   context = None
   sock = None  
-  
+  logger = None
+   
   def __init__(self):
     self.readEnv()
     self.createContext()
 
-    db = Db()
+    self.db = Db()
+    
+    self.logger = Logger(self.logsPath)
     
     print('Server created')
   
@@ -42,6 +49,7 @@ class Server:
     self.serverCert = os.getenv('SERVER_CERT')
     self.serverKey = os.getenv('SERVER_KEY')
     self.clientCert = os.getenv('CLIENT_CERT')
+    self.logsPath = os.getenv('SERVER_LOG')
   
   def sslBind(self):
     self.sock.bind((self.host, self.port))  
@@ -64,14 +72,40 @@ class Server:
           print(e)
       
       with connection:
-        print('Connected by', client_addr)
+        self.logger.logMessage(
+          'Connected by ' + str(client_addr),
+          LoggerTypes.INFO
+        )
         
         while True:
-          data = connection.recv(1024)
+          data = pickle.loads(connection.recv(4096))
+          assert isinstance(data, Message)
           
-          if not data:
-            break
+          resp, type = self.handleMessage(data)              
+
+          Logger.logMessage(self.logger, resp, type)
           
-          print(f'received: {data.decode("utf-8")}')
-          
-        connection.close()
+          connection.sendall(pickle.dumps(resp))
+
+  def handleTrainer(self, message):
+    assert isinstance(message, Message)
+    assert isinstance(message.data, str)
+    
+    operation = message.data.split(' ')[0]
+    
+    data = None
+    loggerType = LoggerTypes.INFO
+    
+    if operation == 'getAllTrainers':
+      data = self.db.trainer.findAll()
+    else:
+      data = 'Invalid operation or no data found'
+      loggerType = LoggerTypes.ERROR
+      
+    return Message(data, MessageTypes.trainer), loggerType
+    
+  def handleMessage(self, message):
+    assert isinstance(message, Message)
+    
+    if(message.messageType == MessageTypes.trainer):
+      return self.handleTrainer(message)

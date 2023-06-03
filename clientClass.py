@@ -1,5 +1,9 @@
-import ssl, socket, os
+import ssl, socket, os, pickle
 from dotenv import load_dotenv
+from message import Message, MessageTypes
+
+from prisma.models import Trainer
+from logger import Logger, LoggerTypes
 
 class Client:
   clientCert = None
@@ -8,14 +12,17 @@ class Client:
   serverCommonName = None
   serverHost = None
   serverPort = None
-  
+  logsPath = None
+      
   context = None
   client = None
+  logger = None
   
   def __init__(self):
     self.readEnv()
     self.createContext()
     
+    self.logger = Logger(self.logsPath)
     
     print('Client created')
     
@@ -44,6 +51,7 @@ class Client:
     self.serverCommonName = os.getenv('COMMON_NAME')
     self.serverPort = int(os.getenv('PORT'))
     self.serverHost = os.getenv('HOST')
+    self.logsPath = os.getenv('CLIENT_LOG')
     
   def sslConnect(self):
     self.client = self.context.wrap_socket(
@@ -57,10 +65,31 @@ class Client:
     )
     
   def send(self, message):
-    self.client.send(message.encode('utf-8'))
+    assert isinstance(message, Message)
+    
+    self.client.sendall(pickle.dumps(message))
     
   def close(self):
     self.client.close()
   
+  
+  def handleResp(self, sent): 
+    assert isinstance(sent, Message)
     
+    resp = pickle.loads(self.client.recv(1024))
+    assert isinstance(resp, Message)
+    
+    log = ''
+    
+    if sent.data.split(' ')[0] == 'getAllTrainers':
+      log += '\n\nTrainers\n'
+      log += '--------\n\n'
+      
+      for trainer in resp.data:
+        assert isinstance(trainer, Trainer)
+        
+        log += f'{trainer.name}: id {trainer.id}, age {trainer.age} and hometown {trainer.hometown}\n'
+        
+      self.logger.logMessage(log + '\n', LoggerTypes.INFO)
+
   
