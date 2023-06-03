@@ -5,8 +5,8 @@ def main():
   prisma = Prisma()
   prisma.connect()
   
-  prisma.execute_raw('DELETE FROM "public"."Trainer"')
-  prisma.execute_raw('DELETE FROM "public"."Pokemon"')
+  prisma.execute_raw('DELETE FROM "public"."Trainer" CASCADE')
+  prisma.execute_raw('DELETE FROM "public"."Pokemon" CASCADE')
   
   with open("seed.json") as f: 
     data = json.load(f)

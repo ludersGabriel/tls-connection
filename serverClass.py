@@ -133,30 +133,40 @@ class Server:
     elif operation == 'createTrainer':
       data = self.db.trainer.create(
         {
-          'name': split[1],
+          'name': split[1].replace('_', ' '),
           'age': int(split[2]),
-          'hometown': split[3]
+          'hometown': split[3].replace('_', ' ')
         }
       )
     elif operation == 'updateTrainer':
       dbData = self.db.trainer.findOne(int(split[1]))
       
       if dbData is None:
-        data = 'Trainer not found'
+        data = None
         loggerType = LoggerTypes.ERROR
       else:
-        name = split[2] if split[2] != 'null' else dbData['name']
-        age = int(split[3]) if split[3] != 'null' else dbData['age']
-        hometown = split[4] if split[4] != 'null' else dbData['hometown']
+        name = split[2] if split[2] != 'null' else dbData.name
+        age = int(split[3]) if split[3] != 'null' else dbData.age
+        hometown = split[4] if split[4] != 'null' else dbData.hometown
+        
+        print(name, age, hometown)
         
         data = self.db.trainer.update(
           int(split[1]),
           {
-            'name': name,
+            'name': name.replace('_', ' '),
             'age': age,
-            'hometown': hometown
+            'hometown': hometown.replace('_', ' ')
           }
         )
+    
+    elif operation == 'deleteTrainer':
+      data = self.db.trainer.delete(int(split[1]))
+      
+      if data == None:
+        loggerType = LoggerTypes.ERROR
+      else:
+        loggerType = LoggerTypes.INFO
       
     else:
       data = 'Invalid operation or no data found'

@@ -5,18 +5,41 @@
 Trainers
 --------
 
-Ash Ketchum: id 9, age 10 and hometown Pallet Town
-Misty: id 10, age 12 and hometown Cerulean City
-Brock: id 11, age 15 and hometown Pewter City
-Gary Oak: id 12, age 10 and hometown Pallet Town
-iago: id 13, age 10 and hometown curitiba
+Ash Ketchum: id 19, age 10 and hometown Pallet Town
+Misty: id 20, age 12 and hometown Cerulean City
+Brock: id 21, age 15 and hometown Pewter City
+gary: id 22, age 10 and hometown matinhos
+iago bobao: id 23, age 12 and hometown caralho de cidade
+bala: id 24, age 22 and hometown matinhos
+dudu: id 25, age 32 and hometown aa
+roberto cordeiro: id 26, age 27 and hometown Curitiba
 
 
-[92m[INFO] [0mtrainer: getTrainer 9
-[92m[INFO] [0moperation and params: ['getTrainer', '9']
-[92m[INFO] [0mAsh Ketchum: id 9, age 10 and hometown Pallet Town
+[92m[INFO] [0mtrainer: deleteTrainer 23
+[92m[INFO] [0moperation and params: ['deleteTrainer', '23']
+[92m[INFO] [0mdeleted = iago bobao: id 23, age 12 and hometown caralho de cidade
 
-[92m[INFO] [0mtrainer: createTrainer mylena 15 curitiba
-[92m[INFO] [0moperation and params: ['createTrainer', 'mylena', '15', 'curitiba']
-[92m[INFO] [0mcreated = mylena: id 14, age 15 and hometown curitiba
+[92m[INFO] [0mtrainer: getAllTrainers
+[92m[INFO] [0moperation and params: ['getAllTrainers']
+[92m[INFO] [0m
+
+Trainers
+--------
+
+Ash Ketchum: id 19, age 10 and hometown Pallet Town
+Misty: id 20, age 12 and hometown Cerulean City
+Brock: id 21, age 15 and hometown Pewter City
+gary: id 22, age 10 and hometown matinhos
+bala: id 24, age 22 and hometown matinhos
+dudu: id 25, age 32 and hometown aa
+roberto cordeiro: id 26, age 27 and hometown Curitiba
+
+
+[92m[INFO] [0mtrainer: deleteTrainer 99
+[92m[INFO] [0moperation and params: ['deleteTrainer', '99']
+[93m[WARNING] [0mTrainer not found
+
+[92m[INFO] [0mtrainer: deleteTrainer 99
+[92m[INFO] [0moperation and params: ['deleteTrainer', '99']
+[93m[WARNING] [0mTrainer not found
 

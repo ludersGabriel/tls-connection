@@ -116,10 +116,43 @@ class Client:
 
     self.logger.logMessage(log, LoggerTypes.INFO)
     
+  def handleUpdateTrainer(self, resp, log):
+    if resp.data == None:
+      log += 'Trainer not found\n'
+      self.logger.logMessage(log, LoggerTypes.WARNING)
+      return
+    
+    assert isinstance(resp.data, Trainer)
+    
+    log += f'updated = {resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
+
+    self.logger.logMessage(log, LoggerTypes.INFO)
+    
+  def handleDeleteTrainer(self, resp, log):
+    if resp.data == None:
+      log += 'Trainer not found\n'
+      self.logger.logMessage(log, LoggerTypes.WARNING)
+      return
+    
+    assert isinstance(resp.data, Trainer)
+    
+    log += f'deleted = {resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
+
+    self.logger.logMessage(log, LoggerTypes.INFO)
+    
   def handleResp(self, sent): 
     assert isinstance(sent, Message)
     
-    resp = pickle.loads(self.client.recv(self.MAX_TCP_SIZE))
+    r = self.client.recv(self.MAX_TCP_SIZE)
+    
+    if not r:
+      self.looger.logMessage(
+        'No response from server', 
+        LoggerTypes.ERROR
+      )
+      return
+    
+    resp = pickle.loads(r)
     assert isinstance(resp, Message)
     
     log = ''
@@ -135,5 +168,9 @@ class Client:
       self.handleGetTrainer(resp, log)
     elif sentSplit[0] == 'createTrainer':
       self.handleCreateTrainer(resp, log)
+    elif sentSplit[0] == 'updateTrainer':
+      self.handleUpdateTrainer(resp, log)
+    elif sentSplit[0] == 'deleteTrainer':
+      self.handleDeleteTrainer(resp, log)
 
   
