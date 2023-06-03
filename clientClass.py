@@ -21,6 +21,8 @@ class Client:
   context = None
   client = None
   logger = None
+  manHost = None
+  manPort = None
   
   def __init__(self):
     self.readEnv() # Load environment variables
@@ -62,6 +64,8 @@ class Client:
     self.serverPort = int(os.getenv('PORT'))
     self.serverHost = os.getenv('HOST')
     self.logsPath = os.getenv('CLIENT_LOG')
+    self.manHost = os.getenv('MAN_HOST')
+    self.manPort = int(os.getenv('MAN_PORT'))
 
   # Wraps the client socket with the SSL  
   def sslConnect(self):

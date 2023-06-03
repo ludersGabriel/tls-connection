@@ -8,8 +8,95 @@
     <title>Relatório TLS-Connection</title>
   </head>
   <body>
-    <div>
-      <p>hello world</p>
-    </div>
+    <header>
+      <h1>Relatório TLS-Connection</h1>
+    </header>
+    <main>
+      <section>
+        <h1>1. Introdução</h1>
+        <p>
+          Este relatório tem como objetivo apresentar o trabalho prático
+          realizado para a disciplina Gerenciamento de Redes de Computadores,
+          ministrada pelo professor Elias P. Duarte Jr. no semestre 2022/2.
+
+          <br />
+          <br />
+
+          O trabalho consiste em impementar uma aplicação cliente/servidor
+          baseada em KVS utilizando mecanismos de comunicação segura de forma a
+          garantir sigilo, autenticidade e integridade. Além disso, também era
+          necessário manter uma pequena base de dados e permitir operações de
+          inserção, update, deleção e criação em cima dela.
+        </p>
+      </section>
+      <section>
+        <h1>2. Implementação</h1>
+        <p>
+          De início, gostaríamos de ressaltar que utilizamos um banco de dados
+          relacional (PSQL) ao invés de um sistema KVS como Mongo ou Redis.
+          <br />
+          A escolha foi tomada devido a familiariade da dupla com esse tipo de
+          banco de dados e devido ao curto tempo para a entrega do trabalho.
+          <br />
+          <br />
+
+          Para a aplicação cliente/servidor, com o intuito de manter os
+          requisitos exigidos, utilizamos os protocolos SSL/TLS para realizar
+          comunicação segura com os sockets. O cliente e o servidor em si foram
+          implementados em python e a conexão com o banco de dados PSQL fui
+          feita através do Prisma (um ORM - object relational mapper - que
+          aceita PSQL e facilita o desenvolvimento). No geral, temos a seguinte
+          estrutura:
+          <br />
+          <br />
+          <img src="img/estrutura.png" alt="Estrutura" />
+          <br />
+          <br />
+          Apenas o servidor comunica com o banco de dados, ao passo que o
+          cliente apenas se comunica com o servidor. A base de dados utilizada é
+          simples e baseada em pokemon, com as seguintes tabelas:
+          <br />
+          <br />
+          <img src="img/tables.png" alt="Tabelas" />
+          <br />
+          <br />
+          O servidor expõe uma API TCP que permite ao cliente realizar as
+          operações de CRUD em cima da tabela de Treinadores. O crud das outras
+          tabelas ainda não foram implementadas de maneira a garantir
+          simplicidade e foco no trabalho. Os comandos disponíveis são:
+        </p>
+        <br />
+        <br />
+        <section class="commands">
+          <p><b> getAllTrainers: </b>retorna todos os treinadores</p>
+          <p>
+            <b> getTrainer id: </b>retorna um treinador específico, dado seu id
+          </p>
+          <p>
+            <b>createTrainer: </b>cria um treinador, dado seu nome, idade e
+            hometown
+          </p>
+          <p>
+            <b>updateTrainer id: </b> da update nos dados de um treinador, dado
+            seu id
+          </p>
+          <p><b>deleteTrainer id: </b> deleta um treinador, dado seu id</p>
+          <p>
+            <b>exit: </b> encerra a conexão com o servidor e finaliza o cliente
+          </p>
+          <p>
+            <b>help: </b> mostra os comandos disponíveis e uma breve descrição
+            de cada um
+          </p>
+        </section>
+      </section>
+    </main>
+    <footer>
+      <p>Carlos Iago Bueno - GRR20190171</p>
+      <p>Gabriel Lüders - GRR20190172</p>
+      <p>
+        <a href="https://github.com/ludersGabriel/tls-connection">github</a>
+      </p>
+    </footer>
   </body>
 </html>
