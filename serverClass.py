@@ -14,6 +14,8 @@ class Server:
   clientCert = None
   logsPath = None
   
+  MAX_TCP_SIZE = 2 ** 16 - 1
+  
   db = None  
   context = None
   sock = None  
@@ -78,14 +80,32 @@ class Server:
         )
         
         while True:
-          data = pickle.loads(connection.recv(4096))
+          data = connection.recv(self.MAX_TCP_SIZE)
+          
+          if not data:
+            self.logger.logMessage(
+              'Connection closed by ' + str(client_addr),
+              LoggerTypes.INFO
+            )
+            break
+          
+          data = pickle.loads(data)
+          
           assert isinstance(data, Message)
           
           resp, type = self.handleMessage(data)              
 
           Logger.logMessage(self.logger, resp, type)
           
-          connection.sendall(pickle.dumps(resp))
+          packet = pickle.dumps(resp)
+          
+          if len(packet) > self.MAX_TCP_SIZE:
+            self.logger.logMessage(
+              f'Packet too large: {len(packet)} bytes', LoggerTypes.ERROR
+            )
+            raise Exception('Packet too large')
+          
+          connection.sendall(packet)
 
   def handleTrainer(self, message):
     assert isinstance(message, Message)

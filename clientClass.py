@@ -13,6 +13,8 @@ class Client:
   serverHost = None
   serverPort = None
   logsPath = None
+  
+  MAX_TCP_SIZE = 2 ** 16 - 1
       
   context = None
   client = None
@@ -67,7 +69,19 @@ class Client:
   def send(self, message):
     assert isinstance(message, Message)
     
-    self.client.sendall(pickle.dumps(message))
+    packet = pickle.dumps(message)
+    
+    if len(packet) > self.MAX_TCP_SIZE:
+      self.logger.logMessage(
+        f'Packet too large: {len(packet)} bytes', LoggerTypes.ERROR
+      )
+      raise Exception('Packet too large')
+    
+    self.logger.logMessage(
+      message, LoggerTypes.INFO
+    )
+    
+    self.client.sendall(packet)
     
   def close(self):
     self.client.close()
@@ -76,7 +90,7 @@ class Client:
   def handleResp(self, sent): 
     assert isinstance(sent, Message)
     
-    resp = pickle.loads(self.client.recv(1024))
+    resp = pickle.loads(self.client.recv(self.MAX_TCP_SIZE))
     assert isinstance(resp, Message)
     
     log = ''
