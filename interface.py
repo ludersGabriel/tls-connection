@@ -12,7 +12,8 @@ class Interface:
     
     self.client = client
     print('Interface created')
-    
+
+  # Prints help menu in the IO stream  
   def help(self):
     print(colors.OKGREEN + '\nCommands')
     print('--------')
@@ -26,6 +27,7 @@ class Interface:
     print(f' {colors.OKBLUE} - help{colors.ENDC}: shows commands\n')
     
     
+  # Creates a message object to get all trainers and sends it
   def getAllTrainers(self):
     message = Message('getAllTrainers', MessageTypes.trainer)
     
@@ -33,6 +35,7 @@ class Interface:
     
     return message
     
+  # Creates a message object to get a trainer and sends it
   def getTrainer(self, id):
     message = Message(f'getTrainer {id}', MessageTypes.trainer)
     
@@ -40,6 +43,7 @@ class Interface:
     
     return message
   
+  # Reads the input to create a trainer
   def readInput(self):
     name = input('Name: ').replace(' ', '_')
     name = ''.join([i for i in name if not i.isdigit()])
@@ -69,18 +73,27 @@ class Interface:
   
   def createTrainer(self):
     
+    # Reads and treats the user input to create a trainer
     name, age, hometown = self.readInput()
     
+    # Creates a message object
     message = Message(f'createTrainer {name} {age} {hometown}', MessageTypes.trainer)
-    
+
+
+    # Sends the packet
     self.client.send(message)
     
     return message
   
+  # Reads the input to update a trainer
   def readUpdateInput(self):
+    # Replaces ' ' to _ so the server knows it is part of a name and not a command
     name = input('Name: ').replace(' ', '_')
+    # If name is not empty, it means the Client demands to change the name
     if name != '':
+      # Verify if there are'nt any digits in the string
       name = ''.join([i for i in name if not i.isdigit()])
+      # If is empty now, the client typed an invalid string
       while name == '':
         print("Name can't be empty and has to be string")
         name = input('Name: ').replace(' ', '_')
@@ -89,6 +102,7 @@ class Interface:
           break
         name = ''.join([i for i in name if not i.isdigit()])
 
+    # Reads and treats Age of trainer
     age = input('Age: ')
     while isinstance(age, int) == False and age != '':
       try:
@@ -97,9 +111,14 @@ class Interface:
         print("Age must be a number")
         age = input('Age: ')
     
+    # Reads and treats Hometown of trainer
+    # Replaces ' ' to _ so the server knows it is part of a name and not a command
     hometown = input('Hometown: ').replace(' ', '_')
+    # If name is not empty, it means the Client demands to change the hometown
     if hometown != '':
+      # Remove the digits
       hometown = ''.join([i for i in hometown if not i.isdigit()])
+      # If is empty now, the client typed an invalid string
       while hometown == '':
         print("Hometown can't be empty and has to be string")
         hometown = input('Hometown: ').replace(' ', '_')
@@ -110,9 +129,11 @@ class Interface:
     
     return name, age, hometown
   
+  # Creates a message object to update a trainer and sends it
   def updateTrainer(self, id):
     print("Just hit enter if you dont want to update a field")
     
+    # Reads and treats the user input to update a trainer
     name, age, hometown = self.readUpdateInput()
 
     if name == '':
@@ -122,12 +143,15 @@ class Interface:
     if hometown == '':
       hometown = 'null'
     
+    # Creates a message objetc
     message = Message(f'updateTrainer {id} {name} {age} {hometown}', MessageTypes.trainer)
     
+    # Sends the packet
     self.client.send(message)
     
     return message
   
+  # Creates a message object to delete a trainer and sends it
   def deleteTrainer(self, id):
     message = Message(f'deleteTrainer {id}', MessageTypes.trainer)
     
@@ -139,6 +163,7 @@ class Interface:
     while True:
       data = input('>>> ').split(' ')
   
+      # Checks which command the client choose
       if data[0] == 'getAllTrainers':
         return self.getAllTrainers()
       elif data[0] == 'getTrainer':

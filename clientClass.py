@@ -25,8 +25,9 @@ class Client:
   manPort = None
   
   def __init__(self):
-    self.readEnv() # Load environment variables
-    self.createContext() # Creates a Client context
+    # Load environment variables and creates a Client context
+    self.readEnv()
+    self.createContext()
     
     self.logger = Logger(self.logsPath)
     
@@ -93,27 +94,37 @@ class Client:
       )
       raise Exception('Packet too large')
     
+    # Writes log message
     self.logger.logMessage(
       message, LoggerTypes.INFO
     )
     
+    # Sends the packet through the network
     self.client.sendall(packet)
     
+  # Close client context
   def close(self):
     self.client.close()
   
+  # Handles GetAllTrainers Client Request
   def handleGetAllTrainers(self, resp, log):
+    # Append to log
     log += '\n\nTrainers\n'
     log += '--------\n\n'
     
+    # Checks if trainers are a trainer instance
     for trainer in resp.data:
       assert isinstance(trainer, Trainer)
       
+      # Append trainer informations to the to log
       log += f'{trainer.name}: id {trainer.id}, age {trainer.age} and hometown {trainer.hometown}\n'
       
+    # Appends a newline to log and writes log
     self.logger.logMessage(log + '\n', LoggerTypes.INFO)
   
+  # Handles GetTrainer Client Request
   def handleGetTrainer(self, resp, log):
+    # Treats not founding clients and writes into the log file
     if resp.data == None:
       log += 'Trainer not found\n'
       self.logger.logMessage(log, LoggerTypes.WARNING)
@@ -121,18 +132,26 @@ class Client:
     
     assert isinstance(resp.data, Trainer)
     
+    # Append trainter information to the log
     log += f'{resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
     
+    # Writes into the log file
     self.logger.logMessage(log, LoggerTypes.INFO)
   
+  # Handles CreateTrainer Client Request
   def handleCreateTrainer(self, resp, log):
+    # Checks if resp.data is a trainer instance
     assert isinstance(resp.data, Trainer)
     
+    # Append to the log
     log += f'created = {resp.data.name}: id {resp.data.id}, age {resp.data.age} and hometown {resp.data.hometown}\n'
 
+    # Writes into the log file
     self.logger.logMessage(log, LoggerTypes.INFO)
     
+  # Handles UpdateTrainer Client Request
   def handleUpdateTrainer(self, resp, log):
+    # Treats not founding trainers and writes into the log file
     if resp.data == None:
       log += 'Trainer not found\n'
       self.logger.logMessage(log, LoggerTypes.WARNING)
@@ -144,6 +163,7 @@ class Client:
 
     self.logger.logMessage(log, LoggerTypes.INFO)
     
+  # Handles DeleteTrainer Client Request
   def handleDeleteTrainer(self, resp, log):
     if resp.data == None:
       log += 'Trainer not found\n'
@@ -159,8 +179,10 @@ class Client:
   def handleResp(self, sent): 
     assert isinstance(sent, Message)
     
+    # Receives client message
     r = self.client.recv(self.MAX_TCP_SIZE)
     
+    # Checks if r is null
     if not r:
       self.looger.logMessage(
         'No response from server', 
@@ -168,9 +190,11 @@ class Client:
       )
       return
     
+    # Cast bytes to class
     resp = pickle.loads(r)
     assert isinstance(resp, Message)
     
+    # Log buffer
     log = ''
     
     sentSplit = sent.data.split(' ')
@@ -178,6 +202,7 @@ class Client:
     op = f'operation and params: {sentSplit}'
     self.logger.logMessage(op, LoggerTypes.INFO)
     
+    # Checks which command the client choose
     if sentSplit[0] == 'getAllTrainers':
       self.handleGetAllTrainers(resp, log)
     elif sentSplit[0] == 'getTrainer':
@@ -188,5 +213,3 @@ class Client:
       self.handleUpdateTrainer(resp, log)
     elif sentSplit[0] == 'deleteTrainer':
       self.handleDeleteTrainer(resp, log)
-
-  

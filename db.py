@@ -6,12 +6,15 @@ class Db:
   trainer = None
   
   def __init__(self):
+    # Connect to the database
     self.prisma = Prisma()
     self.prisma.connect()
     
+    # Creates an instance of trainer
     self.trainer = Trainer(self.prisma)
     print('Db created')
    
+  # Disconnects of the database
   def disconnect(self):
     self.prisma.disconnect()
     print('Db disconnected')

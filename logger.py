@@ -54,6 +54,7 @@ class Logger:
     else:
       log += colors.WARNING + '[WARNING] ' + colors.ENDC
     
+    # Checks if message is an instance of Message or if it is a simple string
     if isinstance(message, Message):
       log += f'{message.messageType.name}: {message.data}'
     elif isinstance(message, str):
