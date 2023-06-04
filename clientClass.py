@@ -35,6 +35,7 @@ class Client:
     self.withMan = withMan
     
     print('[   OK   ] Client created successfully!')
+    print('Client created successfully!')
 
   # Creates a Client context  
   def createContext(self):
