@@ -48,7 +48,9 @@
           estrutura:
           <br />
           <br />
-          <img src="img/estrutura.png" alt="Estrutura" />
+          <div class="imgWrapper">
+            <img src="img/estrutura.png" alt="Estrutura" />
+          </div>
           <br />
           <br />
           Apenas o servidor comunica com o banco de dados, ao passo que o
@@ -695,6 +697,14 @@
             para ouvir mensagens do cliente e um para enviar mensagens ao servidor. Por fim,
             colamos cada fluxo em uma thread e iniciamos as threads com a função handle_send. 
           </p>
+
+          <p>
+            Dessa forma, ficamos com uma estrutura assim:
+          </p>
+
+          <div class="imgWrapper">
+            <img src="img/mitm.png" alt="mitm" />
+          </div>
 
           <p>
             A função handle_send, caso a comunicação seja servidor -> cliente, apenas repassa 
