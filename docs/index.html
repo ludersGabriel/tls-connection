@@ -440,7 +440,291 @@
             e a chave privada do cliente. Com o contexto criado, damos wrap no cliente e pronto! Já podemos transmitir
             mensagens seguras e conectar no nosso servidor! (:
           </p>
-        
+        </section>
+        <section>
+          <h2>3.4 Rodando nosso sistema mínimo</h2>
+          <p>Em um terminal: </p>
+          <code>python3 server.py</code>
+          <p>Em outro: </p>
+          <code>python3 client.py</code>
+          <br />
+          <div class="imgWraper">
+            <img src="img/minimal.png" alt="minimal" />
+          </div>
+
+          <p>
+            Se seu output foi igual ao da imagem, parabéns, sua conexão segura mínima está feita!! Agora o céu
+            é o limite :p
+          </p>
+        </section>
+      </section>
+      <section>
+        <h1>4. Análises</h1>
+        <p>
+          Aqui discutiremos algumas análises feitas para demonstrar que atingimos sigilo, autenticidade e integridade com o 
+          sistema feito em cima da conexão mínima descrita acima.
+        </p>
+
+        <section>
+          <h2>4.1 Autenticidade</h2>
+          <p>
+            Para demonstrar que o sistema leva em consideração autenticidade, criamos alguns supostos atacantes 
+            que tentam comunicar com o servidor. O primeiro não tem certificado algum, apenas um socket tcp com um 
+            contexto default: 
+          </p>
+          <code>
+            import socket
+            import ssl
+
+            SERVER_HOST = '127.0.0.1'
+            SERVER_PORT = 8080
+
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            client = context.wrap_socket(
+              client, server_hostname=SERVER_HOST
+            )
+
+            client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            if __name__ == '__main__':
+              client.connect((SERVER_HOST, SERVER_PORT))
+              
+              client.sendall('Hello babyyyyy'.encode('utf-8'))
+              
+              client.close()
+          </code>
+
+          <div class="imgWrapper">
+            <img src="img/noCert.png" alt="atacante1" />
+          </div>
+
+          <p>
+            Aqui, como esperado, o servidor recusa a conexão pois o cliente não apresentou
+            certificado algum para comprovar qualquer identidade.
+          </p>
+
+          <p>
+            O atacante 2, por sua vez, apresenta um certificado, mas não é o certificado do cliente:
+          </p>
+
+          <code>
+            import socket
+            import ssl
+
+            SERVER_HOST = '127.0.0.1'
+            SERVER_PORT = 8080
+            SERVER_COMMON_NAME = 'astora'
+
+            ATTACKER_CERT = './attacker/attacke.crt'
+            ATTACKER_KEY = './attacker/attacker.key'
+
+            context = ssl.create_default_context(
+              ssl.Purpose.SERVER_AUTH,
+            )
+            context.load_cert_chain(certfile=ATTACKER_CERT, keyfile=ATTACKER_KEY)
+
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            client = context.wrap_socket(
+                client,
+                server_side=False,
+                server_hostname=SERVER_COMMON_NAME
+            )
+
+            if __name__ == '__main__':
+              client.connect((SERVER_HOST, SERVER_PORT))
+              
+              client.send('Hello babyyyyy'.encode('utf-8'))
+              
+              client.close()
+          </code>
+
+          <div class="imgWrapper">
+            <img src="img/attacker2.png" alt="atacante2" />
+          </div>
+
+          <p>
+            Aqui a conexão foi rejeitada porque o certificado apresentado 
+            não é conhecido pelo servidor!
+          </p>
+
+          <p>
+            O terceiro atacante possui as mesmas características do atacante 2, 
+            mas também possui acesso ao certificado do servidor:
+          </p>
+
+          <code>
+            import socket
+            import ssl
+
+            SERVER_HOST = '127.0.0.1'
+            SERVER_PORT = 8080
+            SERVER_COMMON_NAME = 'astora'
+            SERVER_CERT = './server/server.crt'
+
+            ATTACKER_CERT = './attacker/attacke.crt'
+            ATTACKER_KEY = './attacker/attacker.key'
+
+            context = ssl.create_default_context(
+              ssl.Purpose.SERVER_AUTH,
+              cafile=SERVER_CERT
+            )
+            context.load_cert_chain(certfile=ATTACKER_CERT, keyfile=ATTACKER_KEY)
+
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            client = context.wrap_socket(
+                client,
+                server_side=False,
+                server_hostname=SERVER_COMMON_NAME
+            )
+
+            if __name__ == '__main__':
+              client.connect((SERVER_HOST, SERVER_PORT))
+              
+              client.send('Hello babyyyyy'.encode('utf-8'))
+              
+              client.close()
+          </code>
+
+          <div class="imgWrapper">
+            <img src="img/attacker3.png" alt="atacante3" />
+          </div>
+
+          <p>
+            Mais uma vez a conexão é recusada!
+          </p>
+
+          <p>
+            Como podemos ver, o servidor só aceita conexões de clientes que apresentem
+            o certificado correto e que seja conhecido por ele. Caso contrário, a conexão
+            é recusada. Dessa forma, garantimos autenticidade.
+          </p>
+        </section>
+        <section>
+          <h2>4.2 Integridade</h2>
+          <p>
+            Para demonstrar integridade, implementamos um man in the midle que intercepta
+            e inverte o último bit de cada mensagem que passa por ele:
+          </p>
+
+          <code>
+            import socket, os
+            from threading import Thread
+
+            from dotenv import load_dotenv
+
+            # Maximum size of TCP packets
+            MAX_TCP_SIZE = 2 ** 16 - 1024
+
+
+            def handle_send(socket_in, socket_out, fromClient = False):
+              # Verify that the sockets instances were created properly
+              assert isinstance(socket_in, socket.socket)
+              assert isinstance(socket_out, socket.socket)
+              
+              # Server -> Client flow
+              if not fromClient:
+                while True:
+                    try:
+                        socket_out.sendall(socket_in.recv(MAX_TCP_SIZE))
+                    except:
+                        break
+              # Client -> Server flow
+              else:
+                packets = 5
+                while True:
+                    try:
+                      data = socket_in.recv(MAX_TCP_SIZE)
+                      
+                      data = bytearray(data)
+
+                      if packets == 0:
+                        # Invert the last bit of our data using XOR
+                        data[len(data) - 1] = data[len(data) - 1] ^ 1
+                      elif packets > 0:
+                        print('Packets left: ' + str(packets))
+                      else:
+                        break
+                      socket_out.sendall(bytes(data))
+                      packets -= 1
+                    except:
+                      break
+
+            if __name__ == '__main__':
+              # Load environment variables of .env
+              load_dotenv()
+              MAN_HOST = os.getenv('MAN_HOST')
+              MAN_PORT = int(os.getenv('MAN_PORT'))
+              
+              SERVER_HOST = os.getenv('HOST')
+              SERVER_PORT = int(os.getenv('PORT'))
+              
+              # Creates a TCP socket with ipv4
+              listener_socket = socket.socket(
+                  socket.AF_INET, socket.SOCK_STREAM
+              )
+
+              # Binds the socket with a port
+              listener_socket.bind((MAN_HOST, MAN_PORT))
+              listener_socket.listen(5)
+              
+              # Creates a TCP socket with ipv4 to connect to the server
+              server_socket = socket.socket(
+                  socket.AF_INET, socket.SOCK_STREAM
+              )
+              server_socket.connect((SERVER_HOST, SERVER_PORT))
+              
+              # Use the listener socket to listen to the client
+              client_socket, address = listener_socket.accept()
+
+              # Creates two threads to: client -> server flow and server -> client flow
+              Thread(target=handle_send, args=(client_socket, server_socket, True)).start()
+              Thread(target=handle_send, args=(server_socket, client_socket)).start()
+          </code>
+
+          <p>
+            Começando pela main: pegamos as informações do host e porta do servidor e do servidor
+            do man in the midle (mitm) que estão no arquivo .env. Depois, criamos um socket tcp 
+            para ouvir mensagens do cliente e um para enviar mensagens ao servidor. Por fim,
+            colamos cada fluxo em uma thread e iniciamos as threads com a função handle_send. 
+          </p>
+
+          <p>
+            A função handle_send, caso a comunicação seja servidor -> cliente, apenas repassa 
+            o pacote. Caso seja cliente -> servidor, faz um xor com 1 do último bit da mensagem caso
+            o countdown de packets atinja 0 e passa para frente se não apenas repassa o pacote.
+             O resultado disso, quando atingimos o countdown é: 
+          </p>
+
+          <div class="imgWrapper">
+            <img src="img/man.png" alt="manInMidle" />
+            <img src="img/badRecord.png" alt="badRecord" />
+          </div>
+
+          <p>
+            Se rodarmos sem pacotes de folga, temos:
+          </p>
+
+          <div class="imgWrapper">
+            <img src="img/encryptError.png" alt="encryptError" />
+          </div>
+
+          <p>
+            Dessa forma podemos ver que caso alguma mensagem seja interceptada e modificada,
+            o TLS detecta e aponta um erro de decriptografia. Dessa forma, garantimos integridade.
+          </p>
+
+          <p>
+            Nos Logs temos exemplos de execução para ambos os casos acima, demonstrando que 
+            o mitm funciona normalmente até que o countdown atinja 0. 
+          </p>
         </section>
       </section>
     </main>

@@ -95,7 +95,15 @@ class Server:
         
         while True:
           # Receives message from client
-          data = connection.recv(self.MAX_TCP_SIZE)
+          data = None
+          try:
+           data = connection.recv(self.MAX_TCP_SIZE)
+          except Exception as e:
+            self.logger.logMessage(
+              'Error receiving data: ' + str(e),
+              LoggerTypes.ERROR
+            )
+            break
           
           if not data:
             self.logger.logMessage(

@@ -1,4 +1,1 @@
-[92m[INFO] [0mConnected by ('192.168.1.51', 56876)
-[92m[INFO] [0mConnection closed by ('192.168.1.51', 56876)
-[92m[INFO] [0mConnected by ('192.168.1.51', 56786)
-[91m[ERROR] [0mtrainer: None
+[91m[ERROR] [0mError accepting connection: [SSL: TLSV1_ALERT_DECRYPTION_FAILED] tlsv1 alert decryption failed (_ssl.c:997)

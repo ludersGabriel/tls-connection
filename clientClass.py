@@ -23,13 +23,16 @@ class Client:
   logger = None
   manHost = None
   manPort = None
+  withMan = False
   
-  def __init__(self):
+  def __init__(self, withMan=False):
     # Load environment variables and creates a Client context
     self.readEnv()
     self.createContext()
     
     self.logger = Logger(self.logsPath)
+    
+    self.withMan = withMan
     
     print('[   OK   ] Client created successfully!')
 
@@ -76,10 +79,15 @@ class Client:
       server_hostname=self.serverCommonName
     )
     
-    # Connects to the server
-    self.client.connect(
-      (self.serverHost, self.serverPort)
-    )
+    if not self.withMan:
+      # Connects to the server
+      self.client.connect(
+        (self.serverHost, self.serverPort)
+      )
+    else:
+      self.client.connect(
+        (self.manHost, self.manPort)
+      )
     
   def send(self, message):
     assert isinstance(message, Message)
