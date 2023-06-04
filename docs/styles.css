@@ -110,5 +110,27 @@ code {
   font-size: 105%;
   display: block;
   white-space: pre-wrap;
-  text-align: left;
+}
+
+.logs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+a {
+  color: black;
+}
+
+footer a {
+  color: white;
+}
+
+.rawLogs {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+
+
 }

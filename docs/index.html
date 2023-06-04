@@ -726,6 +726,211 @@
             o mitm funciona normalmente até que o countdown atinja 0. 
           </p>
         </section>
+        <section>
+          <h2>4.3 Sigilo</h2>
+          <p>
+            Para demonstrar sigilo, utilizamos o wireshark para capturar os pacotes enviados
+            e recebidos pelo cliente e pelo servidor de maneira a mostrar que eles estão criptografados.
+            Temos também os logs de execução do cliente e do servidor nessa etapa para mostrar o que estava
+            trafegando entre eles.
+          </p>
+          <div class="logs">
+            <div>
+              <code>
+                <b>[INFO] trainer: getAllTrainers</b>
+                [INFO] operation and params: ['getAllTrainers']
+                [INFO] 
+
+                Trainers
+                --------
+
+                Ash Ketchum: id 1, age 10 and hometown Pallet Town
+                Berto: id 5, age 14 and hometown Curitiba
+                Vudala: id 7, age 9 and hometown Santa Quitera
+                Raul: id 8, age 17 and hometown Alagoas
+                iago: id 9, age 14 and hometown Curitiba
+                gabs: id 11, age 21 and hometown matinhos
+                yukan: id 12, age 15 and hometown Santa Quitera
+                bolinha: id 13, age 32 and hometown santos
+                Jose: id 14, age 34 and hometown Rio De Janeiro
+                lindomar: id 15, age 21 and hometown Parana
+                Mylena: id 16, age 25 and hometown Cuiaba
+
+
+                <b>[INFO] trainer: getTrainer 1</b>
+                [INFO] operation and params: ['getTrainer', '1']
+                [INFO] Ash Ketchum: id 1, age 10 and hometown Pallet Town
+
+                <b>[INFO] trainer: createTrainer Guedes 45 Rio_de_Janeiro</b>
+                [INFO] operation and params: ['createTrainer', 'Guedes', '45', 'Rio_de_Janeiro']
+                [INFO] created = Guedes: id 17, age 45 and hometown Rio de Janeiro
+
+                <b>[INFO] trainer: updateTrainer 13 Lula null null</b>
+                [INFO] operation and params: ['updateTrainer', '13', 'Lula', 'null', 'null']
+                [INFO] updated = Lula: id 13, age 32 and hometown santos
+
+                <b>[INFO] trainer: deleteTrainer 14</b>
+                [INFO] operation and params: ['deleteTrainer', '14']
+                [INFO] deleted = Jose: id 14, age 34 and hometown Rio De Janeiro
+              </code>
+            </div>
+            <div>
+              <code>
+                <b>[INFO]</b> Connected by ('192.168.1.51', 39140)
+                <b>[INFO]</b> trainer: [Trainer(id=1, name='Ash Ketchum', age=10, hometown='Pallet Town', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 3, 19, 12, 50, 557000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 3, 19, 12, 50, 557000, tzinfo=datetime.timezone.utc)), Trainer(id=5, name='Berto', age=14, hometown='Curitiba', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 3, 19, 37, 31, 720000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 3, 19, 38, 59, 946000, tzinfo=datetime.timezone.utc)), Trainer(id=7, name='Vudala', age=9, hometown='Santa Quitera', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 3, 19, 45, 28, 856000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 3, 19, 45, 28, 856000, tzinfo=datetime.timezone.utc)), Trainer(id=8, name='Raul', age=17, hometown='Alagoas', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 2, 39, 45, 233000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 2, 39, 45, 233000, tzinfo=datetime.timezone.utc)), Trainer(id=9, name='iago', age=14, hometown='Curitiba', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 2, 58, 35, 514000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 2, 59, 34, 107000, tzinfo=datetime.timezone.utc)), Trainer(id=11, name='gabs', age=21, hometown='matinhos', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 1, 27, 137000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 1, 27, 137000, tzinfo=datetime.timezone.utc)), Trainer(id=12, name='yukan', age=15, hometown='Santa Quitera', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 1, 55, 65000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 1, 55, 65000, tzinfo=datetime.timezone.utc)), Trainer(id=13, name='bolinha', age=32, hometown='santos', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 2, 51, 970000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 2, 51, 970000, tzinfo=datetime.timezone.utc)), Trainer(id=14, name='Jose', age=34, hometown='Rio De Janeiro', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 3, 7, 497000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 3, 7, 497000, tzinfo=datetime.timezone.utc)), Trainer(id=15, name='lindomar', age=21, hometown='Parana', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 3, 34, 649000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 3, 34, 649000, tzinfo=datetime.timezone.utc)), Trainer(id=16, name='Mylena', age=25, hometown='Cuiaba', PokemonOnUsers=None, createdAt=datetime.datetime(2023, 6, 4, 3, 5, 23, 89000, tzinfo=datetime.timezone.utc), updatedAt=datetime.datetime(2023, 6, 4, 3, 5, 23, 89000, tzinfo=datetime.timezone.utc))]
+                <b>[INFO]</b> trainer: id=1 name='Ash Ketchum' age=10 hometown='Pallet Town' PokemonOnUsers=None createdAt=datetime.datetime(2023, 6, 3, 19, 12, 50, 557000, tzinfo=datetime.timezone.utc) updatedAt=datetime.datetime(2023, 6, 3, 19, 12, 50, 557000, tzinfo=datetime.timezone.utc)
+                <b>[INFO]</b> trainer: id=17 name='Guedes' age=45 hometown='Rio de Janeiro' PokemonOnUsers=None createdAt=datetime.datetime(2023, 6, 4, 3, 11, 5, 218000, tzinfo=datetime.timezone.utc) updatedAt=datetime.datetime(2023, 6, 4, 3, 11, 5, 218000, tzinfo=datetime.timezone.utc)
+                <b>[INFO]</b> trainer: id=13 name='Lula' age=32 hometown='santos' PokemonOnUsers=None createdAt=datetime.datetime(2023, 6, 4, 3, 2, 51, 970000, tzinfo=datetime.timezone.utc) updatedAt=datetime.datetime(2023, 6, 4, 3, 11, 23, 156000, tzinfo=datetime.timezone.utc)
+                <b>[INFO]</b> trainer: id=14 name='Jose' age=34 hometown='Rio De Janeiro' PokemonOnUsers=None createdAt=datetime.datetime(2023, 6, 4, 3, 3, 7, 497000, tzinfo=datetime.timezone.utc) updatedAt=datetime.datetime(2023, 6, 4, 3, 3, 7, 497000, tzinfo=datetime.timezone.utc)
+                <b>[INFO]</b> Connection closed by ('192.168.1.51', 39140)
+              </code>
+            </div>
+          </div>
+
+          <p>
+            À esquerda temos os logs de execução do cliente e à direita as respostas enviadas pelo servidor para 
+            cada uma das operações até o fim da conexão. Perceba que os dados são claros. Essas respostas vão no campo 
+            "data" da classe Message apresentada na seção 2. Enquanto isso, no wireshark, temos:
+          </p>
+
+          <div class="imgWrapper">
+            <img src="img/clientPcap.png" alt="wireshark" />
+          </div>          
+
+          <div class="imgWrapper">
+            <img src="img/serverPcap.png" alt="wireshark" />
+          </div>
+
+          <p>
+            A primeira imagem é a comunicação cliente -> servidor e a segunda é a comunicação
+            servidor -> cliente. Perceba que os dados estão criptografados e não são legíveis. 
+            O fluxo inteiro extraido do wireshark pode ser encontrado nos logs abaixo indicados 
+            com "*Pcap.log". 
+          </p>
+          
+          <p>
+            Como os dados são todos transmitidos criptografados, garantimos sigilo.
+          </p>
+        </section>
+
+        <section>
+          <h1>5. Logs</h1>
+          <section>
+            <h2>5.1 Execução normal</h2>
+            <ul class="rawLogs">
+              <li><a href="logs/clientNormal.log" target="_blank">clientNormal.log</a></li>
+              <li><a href="logs/serverNormal.log" target="_blank">serverNormal.log</a></li>
+              <li><a href="logs/clientNormalPcap.log" target="_blank">clientNormalPcap.log</a></li>
+              <li><a href="logs/serverNormalPcap.log" target="_blank">serverNormalPcap.log</a></li>
+              <li><a href="logs/fullPcap.log" target="_blank">fullPcap.log</a></li>
+            </ul>
+
+            <h2>5.2 Execução com falha de decript</h2>
+            <ul class="rawLogs">
+              <li><a href="logs/clientDecript.log" target="_blank">clientDecript.log</a></li>
+              <li><a href='logs/serverDecript.log' target="_blank">serverDecript.log</a></li>
+              <li><a href='logs/serverDecript2.log' target="_blank">serverDecript2.log</a></li>
+            </ul>
+
+            <h2>5.3 Execução servidor em ataque</h2>
+            <ul class="rawLogs">
+              <li><a href='logs/serverAttacker.log' target="_blank">serverAttacker.log</a></li>
+              <li><a href='logs/serverAttacker2.log' target="_blank">serverAttacker2.log</a></li>
+              <li><a href='logs/serverAttacker3.log' target="_blank">serverAttacker3.log</a></li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <h1>6. Fontes</h1>
+          <section>
+            <h2>6.1 Attackers</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/attacker.py.txt' target="_blank">attacker.py</a></li>
+              <li><a href='fontes/attacker2.py.txt' target="_blank">attacker2.py</a></li>
+              <li><a href='fontes/attacker3.py.txt' target="_blank">attacker3.py</a></li>
+              <li><a href='fontes/attacker.crt.txt' target="_blank">attacker.crt</a></li>
+              <li><a href='fontes/attacker.key.txt' target="_blank">attacker.key</a></li>
+            </ul>
+            <p>Nota: attacker.crt e attacker.key precisam estar em uma pasta chamada attacker na root do projeto</p>
+
+            <h2>6.2 Cliente</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/client.py.txt' target="_blank">client.py</a></li>
+              <li><a href='fontes/clientClass.py.txt' target="_blank">clientClass.py</a></li>
+              <li><a href='fontes/interface.py.txt' target="_blank">interface.py</a></li>
+              <li><a href='fontes/client.crt.txt' target="_blank">client.crt</a></li>
+              <li><a href='fontes/client.key.txt' target="_blank">client.key</a></li>
+            </ul>
+            <p>Nota: client.crt e client.key precisam estar em uma pasta chamada client na root do projeto</p>
+
+            <h2>6.3 Server</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/server.py.txt' target="_blank">server.py</a></li>
+              <li><a href='fontes/serverClass.py.txt' target="_blank">serverClass.py</a></li>
+              <li><a href='fontes/db.py.txt' target="_blank">db.py</a></li>
+              <li><a href='fontes/trainer.py.txt' target="_blank">trainer.py</a></li>
+              <li><a href='fontes/server.crt.txt' target="_blank">server.crt</a></li>
+              <li><a href='fontes/server.key.txt' target="_blank">server.key</a></li>
+            </ul>
+            <p>Nota: server.crt e server.key precisam estar em uma pasta chamada server na root do projeto</p>
+
+            <h2>6.4 Misc</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/schema.prisma.txt' target="_blank">docker-compose.yml</a></li>
+              <li><a href='fontes/logger.py.txt' target="_blank">logger.py</a></li>
+              <li><a href='fontes/man.py.txt' target="_blank">man.py</a></li>
+              <li><a href='fontes/message.py.txt' target="_blank">message.py</a></li>
+              <li><a href='fontes/req.txt' target="_blank">req.txt</a></li>
+            </ul>
+
+            <h2>6.5 Prisma</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/schema.prisma.txt' target="_blank">schema.prisma</a></li>
+              <li><a href='fontes/seed.json.txt' target="_blank">seed.json</a></li>
+              <li><a href='fontes/seed.py.txt' target="_blank">seed.py</a></li>
+
+            </ul>
+            <p>Nota: coloque os arquivos do prisma em uma pasta "prisma"</p>
+
+            <h2>6.6 Sistema Mínimo</h2>
+            <ul class="rawLogs">
+              <li><a href='fontes/clientMinimal.py.txt' target="_blank">clientMinimal.py</a></li>
+              <li><a href='fontes/serverMinimal.py.txt' target="_blank">serverMinimal.py</a></li>
+            </ul>
+            <p>nota: use os mesmos certificados de servidor e cliente acima se não for gerar novos</p>
+          </section>
+          <section>
+            <h1>7. Rodando</h1>
+            <p>
+              Para rodar o sistema, é necessário ter o docker e o docker-compose instalados, assim como python3 e pip3. 
+              Recomendo clonar o repositório e partir de lá, mas pode-se também apenas baixar os arquivos necessários. 
+            </p>
+            
+            <p>
+              1. Clone o repositório
+              <br/>1.1. Configure o arquivo .env com as informações necessárias (já está configurado para localhost)
+              <br/>2. Entre na pasta do projeto
+              <br/>3. pip3 install -r req.txt
+              <br/>4. docker-compose up -d (para levantar o banco de dados)
+              <br/>5. cd prisma
+              <br/>6. prisma db push (para criar as tabelas do banco)
+              <br/>7. prisma generate (para gerar o client prisma)
+              <br/>8. python3 seed.py
+              <br/>9. cd ..
+              <br/>10. python3 server.py (em um terminal)
+              <br/>11. python3 man.py (opcional - apenas caso deseje man in the midle - em outro terminal)
+              <br/>12. python3 client.py (em outro terminal) ou para man in the middle: python3 client.py y
+            </p>
+          </section>
+          <section>
+            <h1>8. Conclusão</h1>
+            <p>
+              Acreditamos termos atingido os objetivos propostos. Conseguimos implementar um sistema de comunicação segura
+              que garante sigilo, autenticidade e integridade, como demonstrado na seção de análises, além de termos 
+              implementado um CRUD funcional para um backend de treinadores de pokémon.
+            </p>
+          </section>
+        </section>
       </section>
     </main>
     <footer>
