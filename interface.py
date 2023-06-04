@@ -167,6 +167,14 @@ class Interface:
       if data[0] == 'getAllTrainers':
         return self.getAllTrainers()
       elif data[0] == 'getTrainer':
+        if len(data) != 2:
+          print(f'{colors.ENDC} sintaxe error:{colors.OKBLUE} getTrainer <id>{colors.ENDC}')
+          continue
+        try:
+          id = int(data[1])
+        except:
+          print("id must be a number")
+          continue
         return self.getTrainer(data[1])
       elif data[0] == 'createTrainer':
         return self.createTrainer()
@@ -174,7 +182,7 @@ class Interface:
         return self.updateTrainer(data[1])
       elif data[0] == 'deleteTrainer':
         return self.deleteTrainer(data[1])
-      elif data[0] == 'exit':
+      elif data[0] == 'exit' or data[0] == 'quit':
         self.client.close()
         os._exit(0)
       elif data[0] == 'help':

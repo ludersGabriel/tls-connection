@@ -31,7 +31,7 @@ class Client:
     
     self.logger = Logger(self.logsPath)
     
-    print('[   OK   ] Client created successfully!')
+    print('Client created successfully!')
 
   # Creates a Client context  
   def createContext(self):

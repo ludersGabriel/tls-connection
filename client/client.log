@@ -1,0 +1,36 @@
+[92m[INFO] [0mtrainer: getAllTrainers
+[92m[INFO] [0moperation and params: ['getAllTrainers']
+[92m[INFO] [0m
+
+Trainers
+--------
+
+Ash Ketchum: id 1, age 10 and hometown Pallet Town
+Gary Oak: id 4, age 10 and hometown Pallet Town
+Berto: id 5, age 14 and hometown Curitiba
+Vudala: id 7, age 9 and hometown Santa Quitera
+Raul: id 8, age 17 and hometown Alagoas
+iago: id 9, age 14 and hometown Curitiba
+gabs: id 11, age 21 and hometown matinhos
+yukan: id 12, age 15 and hometown Santa Quitera
+bolinha: id 13, age 32 and hometown santos
+Jose: id 14, age 34 and hometown Rio De Janeiro
+lindomar: id 15, age 21 and hometown Parana
+
+
+[92m[INFO] [0mtrainer: getTrainer 4
+[92m[INFO] [0moperation and params: ['getTrainer', '4']
+[92m[INFO] [0mGary Oak: id 4, age 10 and hometown Pallet Town
+
+[92m[INFO] [0mtrainer: createTrainer Mylena 25 Cuiaba
+[92m[INFO] [0moperation and params: ['createTrainer', 'Mylena', '25', 'Cuiaba']
+[92m[INFO] [0mcreated = Mylena: id 16, age 25 and hometown Cuiaba
+
+[92m[INFO] [0mtrainer: updateTrainer 4 Juca 32 null
+[92m[INFO] [0moperation and params: ['updateTrainer', '4', 'Juca', '32', 'null']
+[92m[INFO] [0mupdated = Juca: id 4, age 32 and hometown Pallet Town
+
+[92m[INFO] [0mtrainer: deleteTrainer 4
+[92m[INFO] [0moperation and params: ['deleteTrainer', '4']
+[92m[INFO] [0mdeleted = Juca: id 4, age 32 and hometown Pallet Town
+
